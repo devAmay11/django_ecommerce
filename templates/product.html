@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="card">
+            <div class="row">
+                <div class="col-md-4">
+                    <img class="card-img-top" src="{{productData.image.url}}" alt="..." />
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <h5 class="card-title">{{productData.name}}</h5>
+                        <p class="card-text">{{productData.description}}</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Rs {{productData.price}}</li>
+                    </ul>
+                    <div class="card-body">
+                        <a href="{% url 'home' %}" class="card-link"><button type="button" class="btn btn-secondary btn-sm">Home</button></a>
+                        {% comment %} <input type="text" value="{{productData.id}}" id="product_id" name="product_id"> {% endcomment %}
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="addToCart({{ productData.id }})">Add to Cart</button>
+                    </div>
+                </div>            
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+function addToCart(productId){
+    $.ajax({
+        type: 'POST',
+        url: '{% url "add_to_cart" %}',  // Assuming this is the correct URL pattern
+        data: {
+            'product_id': productId,  // Pass the product ID in the request data
+            'csrfmiddlewaretoken': '{{ csrf_token }}'  // Include the CSRF token
+        },
+        success: function(data) {
+            document.getElementById('cart_item_count').innerText = data.cart_item_count;
+        },
+        error: function(xhr, status, error) {
+            alert('Error adding product to cart: ' + error);
+        }
+    });
+}
+    
+</script>
+{% endblock  %}
